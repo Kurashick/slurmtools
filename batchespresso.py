@@ -1,11 +1,9 @@
 import os
 import time
-from ase.calculators.espresso import EspressoProfile,EspressoTemplate
-from slurmtools.slurmsh.slurmsh import SlurmSh
 import warnings
-from ase.calculators.genericfileio import (
-    GenericFileIOCalculator,
-)
+from slurmtools.slurmsh import SlurmSh
+from ase.calculators.genericfileio import GenericFileIOCalculator
+from ase.calculators.espresso import EspressoProfile,EspressoTemplate
 
 
 def tail(fn, n):
