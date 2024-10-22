@@ -1,0 +1,10 @@
+================ Slrum Info ================
+DATE      = 2024-10-22T19:21:35+09:00
+PARTITION = gr10569b
+JOB_ID    = 8294538
+JOB_NAME  = submitpy.sh
+NNODES    = 1
+RSC_OPT   = p=1:t=1:c=1:m=4G
+============================================
+Submitted batch job 8294539
+Job completed successfully

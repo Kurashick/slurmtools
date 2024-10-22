@@ -1,0 +1,47 @@
+&CONTROL
+   tstress          = .true.
+   tprnfor          = .true.
+   disk_io          = 'low'
+   pseudo_dir       = '/home/b/b38622/research/qe/pseudo'
+/
+&SYSTEM
+   ecutwfc          = 60
+   ecutrho          = 480
+   occupations      = 'smearing'
+   degauss          = 0.06
+   smearing         = 'mp'
+   ntyp             = 1
+   nat              = 8
+   ibrav            = 0
+/
+&ELECTRONS
+/
+&IONS
+/
+&CELL
+/
+&FCP
+/
+&RISM
+/
+ATOMIC_SPECIES
+Ag 107.8682 Ag_ONCV_PBE-1.0.oncvpsp.upf
+
+K_POINTS automatic
+1 1 1  0 0 0
+
+CELL_PARAMETERS angstrom
+5.78413347010596 0.00000000000000 0.00000000000000
+2.89206673505298 5.00920652399160 0.00000000000000
+0.00000000000000 0.00000000000000 22.36136260098557
+
+ATOMIC_POSITIONS angstrom
+Ag 0.0000000000 1.6697355080 10.0000000000  
+Ag 2.8920667351 1.6697355080 10.0000000000  
+Ag 1.4460333675 4.1743387700 10.0000000000  
+Ag 4.3381001026 4.1743387700 10.0000000000  
+Ag 0.0000000000 0.0000000000 12.3613626010  
+Ag 2.8920667351 0.0000000000 12.3613626010  
+Ag 1.4460333675 2.5046032620 12.3613626010  
+Ag 4.3381001026 2.5046032620 12.3613626010  
+
