@@ -22,7 +22,7 @@ class SlurmSh:
         self.command=["","#============ Shell Script ============"]
         self.dir=dir
         self.filename=filename
-        self.outdir=dir+"/output"
+        self.outdir=os.path.join(dir, '/output')
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
@@ -38,8 +38,8 @@ class SlurmSh:
         kwargs["p"]=p
         kwargs["t"]=t
         kwargs["-rsc"]=rsc
-        kwargs["o"]=self.outdir+"/%x.%j.out"
-        kwargs["e"]=self.outdir+"/%x.%j.err"
+        kwargs["o"]=os.path.join(self.outdir, "/%x.%j.out")
+        kwargs["e"]=os.path.join(self.outdir, "/%x.%j.err")
         for k, v in kwargs.items():
             self.batch.append("#SBATCH -"+k+" "+v )
 
@@ -67,7 +67,7 @@ class SlurmSh:
         シェルスクリプトを作成する.
         """
         lines=self.make_list()
-        self.path=self.dir+"/"+self.filename+'.sh'
+        self.path=os.path.join(self.dir, self.filename+'.sh')
         with open(self.path, mode='w') as f:
             f.write('\n'.join(lines))
     
