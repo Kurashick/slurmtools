@@ -41,14 +41,19 @@ def waitqe(checkinterval=5):
 class BatchEspressoProfile(EspressoProfile):
     """
     ASEのEspressoProfileを継承し、SlurmShオブジェクトを追加.
+    commandはSlurmShオブジェクトに移行
+    引数にSlurmShオブジェクトを追加
     """
-    def __init__(self, command, pseudo_dir, slshobj:SlurmSh, **kwargs):
+    def __init__(self, pseudo_dir, slshobj:SlurmSh, **kwargs):
+        command=""
         super().__init__(command, pseudo_dir, **kwargs)
         self.slshobj = slshobj
         
         
 class BatchEspressoTemplate(EspressoTemplate):
-    '''EspressoTemplateを継承し、executeメソッドをbatch処理に対応するよう上書き'''
+    '''
+    EspressoTemplateを継承し、executeメソッドをbatch処理に対応するよう上書き
+    '''
     def batchexecute(self, directory, slshobj:SlurmSh):
         directory=slshobj.dir
         with open(os.path.join(directory, 'espresso.pwo'), mode='w') as f:
