@@ -22,7 +22,7 @@ class SlurmSh:
         self.command=["","#============ Shell Script ============"]
         self.dir=dir
         self.filename=filename
-        self.outdir=os.path.join(dir, '/output')
+        self.outdir=os.path.join(dir, 'output')
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
@@ -38,8 +38,8 @@ class SlurmSh:
         kwargs["p"]=p
         kwargs["t"]=t
         kwargs["-rsc"]=rsc
-        kwargs["o"]=os.path.join(self.outdir, "/%x.%j.out")
-        kwargs["e"]=os.path.join(self.outdir, "/%x.%j.err")
+        kwargs["o"]=os.path.join(self.outdir, "%x.%j.out")
+        kwargs["e"]=os.path.join(self.outdir, "%x.%j.err")
         for k, v in kwargs.items():
             self.batch.append("#SBATCH -"+k+" "+v )
 
