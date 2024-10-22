@@ -57,8 +57,7 @@ class BatchEspressoTemplate(EspressoTemplate):
             f.write("")
             
         slshobj.submit_sh()
-        #cmd='sbatch /home/b/b38622/research/ASE_batch/qebatch.sh'
-        #check_call(cmd.split())
+
         
         waitqe(checkinterval=5)
         
