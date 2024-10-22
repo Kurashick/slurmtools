@@ -2,7 +2,7 @@
    tstress          = .true.
    tprnfor          = .true.
    disk_io          = 'low'
-   pseudo_dir       = '/home/b/b38622/research/qe/pseudo'
+   pseudo_dir       = 'path/to/pseudo'
 /
 &SYSTEM
    ecutwfc          = 60
