@@ -24,7 +24,7 @@ def setcalc():
     obj.set_command('srun pw.x -nk 3 -nt 6 -nd 6 < ./espresso.pwi > ./espresso.pwo')
     # Optionally create profile to override paths in ASE configuration:
     profile = BatchEspressoProfile(
-        pseudo_dir='/home/b/b38622/research/qe/pseudo',
+        pseudo_dir='path/to/pseudo',
         slshobj=obj
     )
     
