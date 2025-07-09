@@ -1,5 +1,4 @@
-import os
-from slurmtools.slurmsh import SlurmSh
+from jobmanegementtool import SchedulerJob
 from ase.calculators.openmx import OpenMX
 
 class BatchOpenMX(OpenMX):
@@ -10,30 +9,19 @@ class BatchOpenMX(OpenMX):
     """
     def __init__(self, label='ase', directory='./openmx',
                  checkinterval=5,
-                 slshobj:SlurmSh=None,**kwargs):
+                 job:SchedulerJob=None,**kwargs):
         command="openmx"
         self.checkinterval = checkinterval
-        self.slshobj = slshobj
+        self.job = job
         super().__init__(label=label, directory=directory,command=command, **kwargs)
         
     def run(self):
-        run = self.run_slurm
+        run = self.run_on_scheduler
         run()
         
-    def run_slurm(self):
+    def run_on_scheduler(self):
         """
         Execute the OpenMX using Slurm Batch System. In order to use this,
         Your system should have Scheduler. 
-        """
-        
-        slshobj = self.slshobj
-        directory=slshobj.dir
-        # 空にしておく必要がある! これがないと、前回の計算結果が残ってしまう
-        # 出力ファイルを確認すること！
-        #with open(os.path.join(directory, self.label+'.dat'), mode='w') as f:
-            #f.write("")
-        #with open(os.path.join(directory, self.label+'.log'), mode='w') as f:
-            #f.write("")
-            
-            
-        slshobj.submit_sh(wait=True,checkinterval=self.checkinterval)
+        """  
+        self.job.submit_job(wait=True,checkinterval=self.checkinterval)
