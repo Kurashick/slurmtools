@@ -2,6 +2,7 @@
 
 """Slurm提出用のシェルスクリプト(.sh)を作成・提出するためのモジュール."""
 """https://web.kudpc.kyoto-u.ac.jp/manual/ja/run/batch would be helpful."""
+"""https://slurm.schedmd.com/documentation.html would be helpful."""
 
 import os
 from datetime import datetime as dt
@@ -9,10 +10,131 @@ import subprocess
 import time
 import datetime
 import warnings
+from jobmanegementtool import SchedulerJob
+warnings.warn("SlurmSh is deprecated. Use SlurmManager instead.", DeprecationWarning)
 
+class SlurmJob(SchedulerJob):
+    """Slurm提出用のシェルスクリプト(.sh)を作成・提出するためのクラス."""
+    
+    def __init__(self, dir, script_name):
+        """
+        初期化.
+        引数にはシェルスクリプトを保存するディレクトリを指定する.
+        このとき、ディレクトリ内に"output"ディレクトリが存在しない場合は作成する.
+        引数にはファイル名を指定する.
+        """
+        self.option_prefix = "#SBATCH"
+        super().__init__(dir, script_name)
+    
+    def iter_command_output(cmd):
+        """
+        Execute a shell command and yield its output line by line.
+        """
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT,
+                                   universal_newlines=True)
+        while True:
+            line = process.stdout.readline()
+            if line != '':
+                yield line.rstrip()
+            else:
+                break
+    
+    def isRunning(self):
+        """
+        Check submitted job is still Running
+        """
+
+        jobs = self.iter_command_output('squeue')
+        columns = None
+        for line in jobs:
+            if str(self.jobNum) in line:
+                columns = line.split()
+                #print(line)
+        if columns is not None:
+            return True
+        else:
+            return False
+    
+    def get_exit_status(self):
+        jobs=self.iter_command_output("qs")
+        columns = None
+        for line in jobs:
+            if str(self.jobNum) in line:
+                columns = line.split()
+        if columns is not None:
+            return columns[3]
+        else:
+            return False
+        
+    def wait_job(self, checkinterval=5):
+        """
+        ジョブの完了を待つ.
+        jobNum: 提出したジョブの番号
+        checkinterval: ジョブの完了を確認する間隔
+        """
+        
+        while self.isRunning():
+            try:
+                time.sleep(checkinterval)
+            except Exception as e:
+                print(e)
+                self.quit_job()
+                exit()
+        
+        result = self.get_exit_status()
+        return result
+        
+    def quit_job(self):
+        """
+        ジョブをキャンセルする.
+        """
+        if not hasattr(self, 'jobNum'):
+            print("No job number found. Please submit a job first.")
+            return
+        cmd1 = "scancel " + str(self.jobNum)
+        out1 = subprocess.Popen(cmd1, shell=True,
+                               stdout=subprocess.PIPE, universal_newlines=True)
+        out1 = out1.communicate()[0]
+        out2 = subprocess.Popen("Y", shell=True,
+                               stdout=subprocess.PIPE, universal_newlines=True)
+        print(f"Job {self.jobNum} is cannceled.") 
+        return
+        
+    def submit_job(self, wait=False, checkinterval=5):
+        """
+        シェルスクリプトを作成して提出する.
+        wait: ジョブの完了を待つかどうか
+        """
+        self.make_scriptfile()
+        submitcmd='sbatch ' + self.script_path
+        
+        out = subprocess.Popen(submitcmd, shell=True,
+                               stdout=subprocess.PIPE, universal_newlines=True)
+        out = out.communicate()[0]
+        self.jobNum = int(out.split()[-1])
+        dt_st = datetime.datetime.now()
+        print( str(dt_st) +
+              f'\nQueue number is {self.jobNum}\n')
+
+        if wait:
+            self.wait_job(checkinterval)
+            result=self.get_exit_status()
+            dt_end = datetime.datetime.now()
+            print(str(dt_end) +
+                "\nJob "+ str(self.jobNum)+" ended with status "+result + 
+                f"\nelapsed time: {dt_end-dt_st}\n")
+            
+            if result == "FAIL":
+                print(f"{self.jobNum} has exited with error")
+                exit()   
+        return
 
 class SlurmSh:
-    """Slurm提出用のシェルスクリプト(.sh)を扱うクラス."""
+    """
+    Slurm提出用のシェルスクリプト(.sh)を扱うクラス.
+    deprecated: Use SlurmManager instead.
+    """
     
     def __init__(self,dir,filename):
         """

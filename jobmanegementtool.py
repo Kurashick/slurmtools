@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from datetime import datetime as dt
 import os
+import json
 
-class JobScriptManager(ABC):
+class SchedulerJob(ABC):
     """
     Abstract base class for managing job scripts for HPC job schedulers.
     """
@@ -11,23 +12,36 @@ class JobScriptManager(ABC):
         self.command = ["\n#============ Commands ============"]
         self.dir = dir
         self.script_name = script_name
+        self.script_path = os.path.join(self.dir, self.script_name + '.sh')
 
-
+    @property
     @abstractmethod
-    def set_options(self, **kwargs):
+    def option_prefix(self):
+        pass
+    
+    def set_options(self,*options):
         """
         Set job options.
         kwargs should contain key-value pairs for job options.
+        The prefix argument is used to specify the command prefix (e.g., "#SBATCH").
         """
-        pass
+        for option in options:
+            if isinstance(option, str):
+                self.options.append(f"{self.option_prefix} {option}")
+            else:
+                raise ValueError("Options must be provided as strings.")
     
-    @abstractmethod
+
     def set_command(self, *commands):
         """
         Set commands to be executed in the job script.
         Multiple commands can be provided as separate arguments.
         """
-        pass
+        for command in commands:
+            if isinstance(command, str):
+                self.command.append(command)
+            else:
+                raise ValueError("Commands must be provided as strings.")
     
     def make_scriptfile(self):
         """
@@ -38,10 +52,21 @@ class JobScriptManager(ABC):
         comment = f"\n# made by {self.__class__.__name__} automatically\n# {str(dt.now())}"
         script_content.append(comment)
 
-        self.script_path = os.path.join(self.dir, self.script_name + '.sh')
         with open(self.script_path, mode='w') as f:
             f.write('\n'.join(script_content))
         return
+    
+    def export_setting_to_json(self, filename):
+        """
+        Export the job script settings to a JSON file.
+        """
+        script_dict = {
+            "options": self.options,
+            "commands": self.command,
+            "script_path": self.script_path
+        }
+        with open(filename, 'w') as f:
+            json.dump(script_dict, f, indent=4)
     
     @abstractmethod
     def isRunning(self):
@@ -51,14 +76,14 @@ class JobScriptManager(ABC):
         pass
     
     @abstractmethod
-    def quit(self):
+    def quit_job(self):
         """
         Cancel the job if it is running.
         """
         pass
     
     @abstractmethod
-    def wait():
+    def wait_job(self):
         """
         Wait for the job to complete.
         Returns True if the job completed successfully, False otherwise.
@@ -66,7 +91,7 @@ class JobScriptManager(ABC):
         pass
     
     @abstractmethod
-    def submit(self, wait=False, checkinterval=5):
+    def submit_job(self, wait=False, checkinterval=5):
         """
         Submit the job script to the job scheduler.
         Returns the job ID if successful.
