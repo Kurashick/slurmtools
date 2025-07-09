@@ -151,7 +151,7 @@ class SlurmSh:
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-    def set_batch(self,p="gr10569b",t="24:00:00",rsc='p=4:t=8:c=8:m=8G',**kwargs):
+    def set_batch(self,p="gr19999b",t="24:00:00",rsc='p=4:t=8:c=8:m=8G',**kwargs):
         """
         Slurmのオプションを設定する.
         オプション名のhyphen(-)は１つ省略して記述する.(kwargsのkeyにはhyphen(-)を含めないため)
