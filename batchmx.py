@@ -3,9 +3,7 @@ from ase.calculators.openmx import OpenMX
 
 class BatchOpenMX(OpenMX):
     """
-    ASEのOpenMXを継承し、SlurmShオブジェクトを追加.
-    commandはSlurmShオブジェクトに移行
-    引数にSlurmShオブジェクトを追加
+    A class to run OpenMX calculations on a scheduler like Slurm.
     """
     def __init__(self, label='ase', directory='./openmx',
                  checkinterval=5,
