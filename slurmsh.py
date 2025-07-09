@@ -11,6 +11,7 @@ import time
 import datetime
 import warnings
 from jobmanegementtool import SchedulerJob
+from typing_extensions import deprecated
 warnings.warn("SlurmSh is deprecated. Use SlurmManager instead.", DeprecationWarning)
 
 class SlurmJob(SchedulerJob):
@@ -130,6 +131,7 @@ class SlurmJob(SchedulerJob):
                 exit()   
         return
 
+@deprecated
 class SlurmSh:
     """
     Slurm提出用のシェルスクリプト(.sh)を扱うクラス.
