@@ -19,7 +19,7 @@ class SchedulerJob(ABC):
     def option_prefix(self):
         pass
     
-    def set_options(self,*options):
+    def set_options(self,options):
         """
         Set job options.
         kwargs should contain key-value pairs for job options.
@@ -29,10 +29,10 @@ class SchedulerJob(ABC):
             if isinstance(option, str):
                 self.options.append(f"{self.option_prefix} {option}")
             else:
-                raise ValueError("Options must be provided as strings.")
+                raise ValueError(f"Each option must be provided as a string variable, not {type(option)}.")
     
 
-    def set_command(self, *commands):
+    def set_command(self, commands):
         """
         Set commands to be executed in the job script.
         Multiple commands can be provided as separate arguments.
@@ -99,7 +99,7 @@ class SchedulerJob(ABC):
         pass
     
     @abstractmethod
-    def get_exit_stutus(self):
+    def get_exit_status(self):
         """
         Get the exit status of the job.
         Returns True if the job completed successfully, False otherwise.

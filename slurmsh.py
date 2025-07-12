@@ -11,23 +11,41 @@ import time
 import datetime
 import warnings
 from hpctools.jobmanegementtool import SchedulerJob
-from typing_extensions import deprecated
 warnings.warn("SlurmSh is deprecated. Use SlurmManager instead.", DeprecationWarning)
 
 class SlurmJob(SchedulerJob):
     """Slurm提出用のシェルスクリプト(.sh)を作成・提出するためのクラス."""
     
-    def __init__(self, dir, script_name):
+    def __init__(self, dir, script_name, make_auto_output=True):
         """
         初期化.
         引数にはシェルスクリプトを保存するディレクトリを指定する.
         このとき、ディレクトリ内に"output"ディレクトリが存在しない場合は作成する.
         引数にはファイル名を指定する.
         """
-        self.option_prefix = "#SBATCH"
         super().__init__(dir, script_name)
+        if make_auto_output:
+            self.output_option()
+
+
+    def output_option(self):
+        """
+        Set output options for the job script.
+        The output and error files will be saved in the 'output' directory.
+        """
+        outdir = os.path.join(self.dir, 'output')
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        self.set_options([
+            f"-o {outdir}/%x.%j.out",
+            f"-e {outdir}/%x.%j.err"
+        ])
+
     
-    def iter_command_output(cmd):
+    @property
+    def option_prefix(self):return "#SBATCH"
+    
+    def iter_command_output(self,cmd):
         """
         Execute a shell command and yield its output line by line.
         """
@@ -131,13 +149,12 @@ class SlurmJob(SchedulerJob):
                 exit()   
         return
 
-@deprecated
+
 class SlurmSh:
     """
     Slurm提出用のシェルスクリプト(.sh)を扱うクラス.
     deprecated: Use SlurmManager instead.
     """
-    
     def __init__(self,dir,filename):
         """
         初期化.
