@@ -1,4 +1,4 @@
-from jobmanegementtool import SchedulerJob
+from hpctools.jobmanegementtool import SchedulerJob
 from ase.calculators.openmx import OpenMX
 
 class BatchOpenMX(OpenMX):

@@ -10,7 +10,7 @@ import subprocess
 import time
 import datetime
 import warnings
-from jobmanegementtool import SchedulerJob
+from hpctools.jobmanegementtool import SchedulerJob
 from typing_extensions import deprecated
 warnings.warn("SlurmSh is deprecated. Use SlurmManager instead.", DeprecationWarning)
 
