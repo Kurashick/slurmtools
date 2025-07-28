@@ -25,6 +25,8 @@ class SchedulerJob(ABC):
         kwargs should contain key-value pairs for job options.
         The prefix argument is used to specify the command prefix (e.g., "#SBATCH").
         """
+        if self.option_prefix is None:
+            print("Warning: option_prefix is not defined in the subclass.")
         for option in options:
             if isinstance(option, str):
                 self.options.append(f"{self.option_prefix} {option}")
